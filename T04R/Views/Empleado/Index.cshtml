@@ -1,0 +1,233 @@
+﻿@model T04R.Models.EmpleadoViewModel
+
+@{
+    ViewBag.Title = "Empleados";
+}
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<div class="container-xl">
+    <div class="table-responsive">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h2>Tipos de <b>Empleados</b></h2>
+                    </div>
+                    <div class="col-sm-6">
+                        <a href="#addEmpleadoModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span></span></a>
+                        <a href="#deleteEmpleadoModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span></span></a>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                            <span class="custom-checkbox">
+                                <input type="checkbox" id="selectAll">
+                                <label for="selectAll"></label>
+                            </span>
+                        </th>
+                        <th>Nombre</th>                      
+                        <th>Departamento</th>
+                        <th>Accciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int contador = 0;
+                    }
+
+                    @foreach (var item in Model.Empleados)
+                    {
+                        var modaledit = "#editEmpleadoModal" + contador.ToString();
+                        var checkbox = "checkbox" + contador.ToString();
+                        <tr>
+                            <td>
+                                <span class="custom-checkbox">
+                                    <input type="checkbox" id="@checkbox" value="@item.ID" name="ID" form="delete">
+                                    <label for="@checkbox"></label>
+                                </span>
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Departamento.Nombre)</td>
+                            <td>
+                                <a href="@modaledit" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Editar">&#xE254;</i></a>
+                                <a href="@Url.Action("Detalles", "Empleado", new { id = item.ID })" class="delete"><i class="material-icons" data-toggle="tooltip" title="Detalles">&#xf1c3;</i></a>
+                            </td>
+                        </tr>
+
+                        contador++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@{ contador = 0;}
+
+@foreach (var item in Model.Empleados)
+{
+    var modaledit = "editEmpleadoModal" + contador.ToString();
+
+    <div id="@modaledit" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="@Url.Action("Editar","Empleado")" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <div class="modal-header">
+                        <h4 class="modal-title">Editar Empleado (#@item.ID)</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="ID" value="@item.ID" />
+                        <div class="form-group">
+                            <label>@Html.DisplayNameFor(model => model.Empleado.Nombre)</label>
+                            <input type="text" name="Nombre" class="form-control" value="@item.Nombre">
+                        </div>
+                        <div class="form-group">
+                            <label>@Html.DisplayNameFor(model => model.Empleado.FechaDeNacimiento)</label>
+                            <textarea name="FechaDeNacimiento" class="form-control" required>@item.FechaDeNacimiento.ToString()</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>@Html.DisplayNameFor(model => model.Empleado.Tipo.Nombre)</label>
+                            <select name="IDTipo" class="form-control">
+                                @foreach (var t in Model.Tipos)
+                                {
+                                    if (t.ID == item.Tipo.ID)
+                                    {
+                                        <option value="@t.ID" selected>@t.Nombre</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@t.ID">@t.Nombre</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>@Html.DisplayNameFor(model => model.Empleado.Departamento.Nombre)</label>
+                            <select name="IDDepartamento" class="form-control">
+                                @foreach (var d in Model.Departamentos)
+                                {
+                                    if (d.ID == item.Departamento.ID)
+                                    {
+                                        <option value="@d.ID" selected>@d.Nombre</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@d.ID">@d.Nombre</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Nomina</label>
+                            <select name="IDNomina" class="form-control">
+                                @foreach (var n in Model.Nominas)
+                                {
+                                    if (n.ID == item.Nomina.ID)
+                                    {
+                                        <option value="@n.ID" selected>#@n.ID</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@n.ID">#@n.ID</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
+                        <input type="submit" class="btn btn-info" value="Aplicar">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    contador++;
+}
+
+<div id="addEmpleadoModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="@Url.Action("Crear","Empleado")" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h4 class="modal-title">Crear Empleado</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" name="Nombre" class="form-control" placeholder="Nombre">
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha de nacimiento</label>
+                        <textarea name="FechaDeNacimiento" class="form-control" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de empleado</label>
+                        <select name="IDTipo" class="form-control">
+                            @foreach (var t in Model.Tipos)
+                            {
+                                <option value="@t.ID">@t.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Departamento</label>
+                        <select name="IDDepartamento" class="form-control">
+                            @foreach (var d in Model.Departamentos)
+                            {
+                                <option value="@d.ID">@d.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nomina</label>
+                        <select name="IDNomina" class="form-control">
+                            @foreach (var n in Model.Nominas)
+                            {
+                                <option value="@n.ID">#@n.ID</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
+                    <input type="submit" class="btn btn-info" value="Crear">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal HTML -->
+<div id="deleteEmpleadoModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="delete" method="post" action="@Url.Action("Borrar","Empleado")" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h4 class="modal-title">Borrar Empleado(s)</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Seguro que quieres borrar los empleados seleccionados?</p>
+                    <p class="text-warning"><small>Esto no se puede deshacer.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
+                    <input type="submit" class="btn btn-danger" value="Borrar">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

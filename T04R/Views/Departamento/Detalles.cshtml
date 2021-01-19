@@ -1,0 +1,42 @@
+﻿@model T04R.Models.Departamento
+@{
+    ViewBag.Title = "Detalles";
+}
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<div class="container-xl">
+    <div class="table-responsive">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h2><b>Departamentos</b></h2>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Departamento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => Model.ID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => Model.Nombre)
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

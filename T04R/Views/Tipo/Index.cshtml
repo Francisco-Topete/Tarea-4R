@@ -1,0 +1,147 @@
+﻿@model IEnumerable<T04R.Models.Tipo>
+
+@{
+    ViewBag.Title = "Tipos";
+}
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<div class="container-xl">
+    <div class="table-responsive">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h2>Tipos de <b>Empleados</b></h2>
+                    </div>
+                    <div class="col-sm-6">
+                        <a href="#addTipoModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span></span></a>
+                        <a href="#deleteTipoModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span></span></a>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                            <span class="custom-checkbox">
+                                <input type="checkbox" id="selectAll">
+                                <label for="selectAll"></label>
+                            </span>
+                        </th>
+                        <th>Nombre</th>
+                        <th>Accciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int contador = 0;
+                    }
+
+                    @foreach (var item in Model)
+                    {
+                        var modaledit = "#editTipoModal" + contador.ToString();
+                        var checkbox = "checkbox" + contador.ToString();
+                        <tr>
+                            <td>
+                                <span class="custom-checkbox">
+                                    <input type="checkbox" id="@checkbox" value="@item.ID" name="ID" form="delete">
+                                    <label for="@checkbox"></label>
+                                </span>
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+                            <td>
+                                <a href="@modaledit" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Editar">&#xE254;</i></a>
+                                <a href="@Url.Action("Detalles", "Tipo", new { id = item.ID })" class="delete"><i class="material-icons" data-toggle="tooltip" title="Detalles">&#xf1c3;</i></a>
+                            </td>
+                        </tr>
+
+                        contador++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@{ contador = 0;}
+
+@foreach (var item in Model)
+{
+    var modaledit = "editTipoModal" + contador.ToString();
+
+    <div id="@modaledit" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="@Url.Action("Editar","Tipo")" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <div class="modal-header">
+                        <h4 class="modal-title">Editar tipo de empleado</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="ID" value="@item.ID" />
+                        <div class="form-group">
+                            <label>@Html.DisplayNameFor(model => model.Nombre)</label>
+                            <input type="text" name="Nombre" class="form-control" value="@item.Nombre">
+                        </div>                       
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
+                        <input type="submit" class="btn btn-info" value="Aplicar">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    contador++;
+}
+
+<div id="addTipoModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="@Url.Action("Crear","Tipo")" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h4 class="modal-title">Crear tipo de empleado</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" name="Nombre" class="form-control" placeholder="Nombre">
+                    </div>                   
+                </div>
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
+                    <input type="submit" class="btn btn-info" value="Crear">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal HTML -->
+<div id="deleteTipoModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="delete" method="post" action="@Url.Action("Borrar","Tipo")" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h4 class="modal-title">Borrar tipo de empleado(s)</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Seguro que quieres borrar los tipos de empleados seleccionados?</p>
+                    <p class="text-warning"><small>Esto no se puede deshacer.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
+                    <input type="submit" class="btn btn-danger" value="Borrar">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
